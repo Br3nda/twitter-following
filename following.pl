@@ -9,8 +9,9 @@ use Term::Prompt;
 my $username;
 my $password;
 my $help = 0;
+my $sync = 0;
 
-my $result = GetOptions('help' => \$help, 'username=s' => \$username, 'password=s' => \$password);
+my $result = GetOptions('help' => \$help, 'username=s' => \$username, 'password=s' => \$password, 'sync' => \$sync);
 
 pod2usage(-exitval => 0, -verbose => 2) if($help);
 pod2usage(-exitval => 1, -verbose => 1) unless $username && $password; 
@@ -22,13 +23,19 @@ my $res = $twit->diff();
 
 
 foreach my $person (@{ $res->{not_following} }) {
-	my $value = prompt('a', "Add $person y/n", '', 'n');
- 	$twit->follow($person) if $value eq 'y';	
+	my $value = prompt('a', "Add $person y/n", '', 'n') unless $sync;
+	if ($sync or $value eq 'y') {
+ 		print "Adding $person\n";
+		$twit->follow($person);
+	);
 }
 
 foreach my $person (@{ $res->{not_followed }}) {
-	my $value = prompt('a', "Remove $person y/n", '', 'n');
- 	$twit->stop_following($person) if $value eq 'y';	
+	my $value = prompt('a', "Remove $person y/n", '', 'n') unless $sync;
+	if ($sync or $value eq 'y') {
+ 		print "Removing $person\n";
+		$twit->stop_following($person);
+	}
 }
 
 __END__
