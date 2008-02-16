@@ -27,7 +27,7 @@ foreach my $person (@{ $res->{not_following} }) {
 	if ($sync or $value eq 'y') {
  		print "Adding $person\n";
 		$twit->follow($person);
-	);
+	}
 }
 
 foreach my $person (@{ $res->{not_followed }}) {
@@ -65,3 +65,4 @@ Review who is following you, and choose to reciprocate, and who is not following
 use Net::Twitter::Diff from cpan.org
 
 =cut
+
