@@ -26,7 +26,7 @@ foreach my $person (@{ $res->{not_following} }) {
 	my $value = prompt('a', "Add $person y/n", '', 'n') unless $sync;
 	if ($sync or $value eq 'y') {
  		print "Adding $person\n";
-		$twit->follow($person);
+		print $twit->follow($person);
 	};
 }
 
@@ -34,7 +34,7 @@ foreach my $person (@{ $res->{not_followed }}) {
 	my $value = prompt('a', "Remove $person y/n", '', 'n') unless $sync;
 	if ($sync or $value eq 'y') {
  		print "Removing $person\n";
-		$twit->stop_following($person);
+		print $twit->stop_following($person);
 	}
 }
 
