@@ -10,8 +10,10 @@ my $username;
 my $password;
 my $help = 0;
 my $sync = 0;
+my $add = 0;
+my $rm = 0;
 
-my $result = GetOptions('help' => \$help, 'username=s' => \$username, 'password=s' => \$password, 'sync' => \$sync);
+my $result = GetOptions('help' => \$help, 'username=s' => \$username, 'password=s' => \$password, 'sync' => \$sync, 'add' => \$add, 'rm' => \$rm);
 
 pod2usage(-exitval => 0, -verbose => 2) if($help);
 pod2usage(-exitval => 1, -verbose => 1) unless $username && $password; 
@@ -21,21 +23,24 @@ print "Retrieving those you follow, and those that follow you for user $username
 my $twit = Net::Twitter::Diff->new(  username => $username, password => $password);
 my $res = $twit->diff();
 
-
+if(!$rm) {
 foreach my $person (@{ $res->{not_following} }) {
-	my $value = prompt('a', "Add $person y/n", '', 'n') unless $sync;
-	if ($sync or $value eq 'y') {
+	my $value = prompt('a', "Add $person y/n", '', 'n') unless $sync || $add;
+	if ($sync or $add or $value eq 'y') {
  		print "Adding $person\n";
-		print $twit->follow($person);
-	};
+		$twit->follow($person);
+	}
+}
 }
 
+if (!$add) {
 foreach my $person (@{ $res->{not_followed }}) {
-	my $value = prompt('a', "Remove $person y/n", '', 'n') unless $sync;
-	if ($sync or $value eq 'y') {
+	my $value = prompt('a', "Remove $person y/n", '', 'n') unless $sync || $rm;
+	if ($sync or $rm or $value eq 'y') {
  		print "Removing $person\n";
-		print $twit->stop_following($person);
+		$twit->stop_following($person);
 	}
+}
 }
 
 __END__
@@ -65,3 +70,4 @@ Review who is following you, and choose to reciprocate, and who is not following
 use Net::Twitter::Diff from cpan.org
 
 =cut
+
